@@ -1,8 +1,12 @@
 import useInterval from './useInterval';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 
 const DISPLAY_HEIGHT = 64;
+const VELOCITY_CONSTANT = 10;
+const VELOCITY_ATTENUATION = 0.99;
+const VELOCITY_FRICTION = 25;
+const REPOSITION_SPEED = 64;
 let TOUCH_PREVIOUS_Y = NaN;
 let TOUCH_VECTOR = [];
 
@@ -27,84 +31,140 @@ function getYVector(event) {
 }
 
 export default function SlotmachineDisplay({items,buttonId,state}) {
-	const position = useRef(false);
+	const refresh = useState([])[1];
+	const position = useRef(0.);
+	const reposition = useRef(NaN);
 	const timerRunning = useRef(false);
 	const selected = useRef(false);
-	const setSelected = (val)=>{selected.current = val;}
+	const velocity = useRef(0.0);
 	useInterval(()=>{
 		if(timerRunning.current) {
-			
+			if (isNaN(reposition.current)) {
+				//관성제어
+				progress(velocity.current*0.025);
+				velocity.current = velocity.current * VELOCITY_ATTENUATION;
+				let prev = velocity.current;
+				velocity.current -= VELOCITY_FRICTION * 0.025 * Math.sign(velocity.current);
+				if (Math.sign(prev)!==Math.sign(velocity.current)) {
+					velocity.current = 0.
+				}
+				if (velocity.current === 0.) {
+					reposition.current = getReposition();
+				}
+			} else {
+				//제자리로 가기
+				if (Math.abs(reposition.current-position.current)<REPOSITION_SPEED*0.025) {
+					//일정거리가 되면 정지
+					position.current = reposition.current;
+					timerRunning.current = false;
+					refresh([]);
+				} else {
+					let val = REPOSITION_SPEED*0.025*Math.sign(reposition.current-position.current);
+					progress(val);
+				}
+			}
 		}
 	},25);
+	//reposition
+	const getReposition = ()=>{
+		return Math.round(position.current/DISPLAY_HEIGHT)*DISPLAY_HEIGHT;
+	}
+	//vector
+	const getVelocity = ()=>{
+		if (TOUCH_VECTOR.length<1) {
+			return 0.
+		}
+		return (TOUCH_VECTOR.reduce((a, b) => a + b, 0) 
+			/ TOUCH_VECTOR.length) * VELOCITY_CONSTANT;
+	}
 	//position
 	const carculatePosition = (index)=>{
 		if (items.length<=1) {
 			return 0;
 		} else {
-			return index*DISPLAY_HEIGHT-(position.current);
+			if (index===items.length-1&&position.current>0) {
+				//살짝 내려가있을 때 마지막 요소 위치조정
+				return (index-items.length)*DISPLAY_HEIGHT+(position.current);
+			} else if (index===0&&position.current<=(-(items.length-1)*DISPLAY_HEIGHT)) {
+				//올라가있을 때 첫번째 요소 위치조정
+				return (index+items.length)*DISPLAY_HEIGHT+(position.current);
+			} else {
+				return index*DISPLAY_HEIGHT+(position.current);
+			}
 		}
 	}
 	const clampPosition = ()=>{
 		if (items.length<=1) {
 			position.current = 0.;
-		} else {
-
+			return;
+		}
+		while(position.current>DISPLAY_HEIGHT) {
+			position.current -= items.length*DISPLAY_HEIGHT;
+		}
+		while(position.current<= -items.length*DISPLAY_HEIGHT) {
+			position.current += items.length*DISPLAY_HEIGHT;
 		}
 	}
+	const progress = (val)=>{
+		position.current+=val;
+		clampPosition();
+		carculatePosition();
+		refresh([]);
+	}
+	const run = (val)=>{
+		selected.current = false;
+		timerRunning.current = true;
+		reposition.current = NaN;
+		velocity.current = val;
+	}
 	//button
-	const mouseDownCallback = (event)=>{
+	const mouseDownCallback = useCallback((event)=>{
 		if((event.type!=='mousedown'&&event.touches.length<2&&isMobile())||(!isMobile())) {
 			// console.log(`${buttonId}번버튼누름`);
 			TOUCH_VECTOR = [];
 			if (event.type==='touchstart') {
 				TOUCH_PREVIOUS_Y = NaN;
 			}
-			setSelected(true);
+			selected.current = true;
+			timerRunning.current = false;
 		}
-	}
+	},[]);
 	//window
-	const mouseUpCallback = (event)=>{
+	const mouseUpCallback = useCallback((event)=>{
 		if(!selected.current){return;}
 		if((event.type!=='mouseup'&&isMobile())||(!isMobile())) {
 			// console.log(`${buttonId}번버튼뗐음`);
-			setSelected(false);
+			run(getVelocity());
 		}
-	}
-	const mouseMoveCallback = (event)=>{
+	},[]);
+	const mouseMoveCallback = useCallback((event)=>{
 		if(!selected.current){return;}
 		if((event.type!=='mousemove'&&isMobile())||(!isMobile())) {
 			let val = getYVector(event)
-			position.current += val;
-			clampPosition();
-			carculatePosition();
+			progress(val);
 			if (TOUCH_VECTOR.length>=5) {
 				TOUCH_VECTOR.shift();
 			}
 			TOUCH_VECTOR.push(val);
 			// console.log(TOUCH_VECTOR);
 		}
-	}
-	//무브,릴리즈리스너 
+	// eslint-disable-next-line 
+	},[])
+	//무브,릴리즈리스너
 	useEffect(()=>{
-
-		if (selected.current) {
-
-		} else {
-			TOUCH_PREVIOUS_Y = NaN;
-		}
-
+		
 		window.addEventListener('mousemove',mouseMoveCallback);
 		window.addEventListener('touchmove',mouseMoveCallback);
 		window.addEventListener('mouseup',mouseUpCallback);
 		window.addEventListener('touchend',mouseUpCallback);
-
+		
 		return ()=>{
 			window.removeEventListener('mousemove',mouseMoveCallback);
 			window.removeEventListener('touchmove',mouseMoveCallback);
 			window.removeEventListener('mouseup',mouseUpCallback);
 			window.removeEventListener('touchend',mouseUpCallback);
 		};
-
+	// eslint-disable-next-line 
 	},[]);
 	return <>
 		<div className='slotmachineDisplay' 

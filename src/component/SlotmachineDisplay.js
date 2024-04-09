@@ -1,6 +1,6 @@
 import useInterval from './useInterval';
 
-import { useRef, useEffect, useState, useCallback } from 'react';
+import { useRef, useEffect, useState } from 'react';
 
 const DISPLAY_HEIGHT = 64;
 const VELOCITY_CONSTANT = 10;
@@ -30,11 +30,12 @@ function getYVector(event) {
 	return 0;
 }
 
-export default function SlotmachineDisplay({items,buttonId,state}) {
+export default function SlotmachineDisplay({items,modifyRunningSlots}) {
 	const refresh = useState([])[1];
 	const position = useRef(0.);
 	const reposition = useRef(NaN);
 	const timerRunning = useRef(false);
+	const runningFlag = useRef(false);
 	const selected = useRef(false);
 	const velocity = useRef(0.0);
 	useInterval(()=>{
@@ -56,8 +57,7 @@ export default function SlotmachineDisplay({items,buttonId,state}) {
 				if (Math.abs(reposition.current-position.current)<REPOSITION_SPEED*0.025) {
 					//일정거리가 되면 정지
 					position.current = reposition.current;
-					timerRunning.current = false;
-					refresh([]);
+					stop();
 				} else {
 					let val = REPOSITION_SPEED*0.025*Math.sign(reposition.current-position.current);
 					progress(val);
@@ -67,7 +67,7 @@ export default function SlotmachineDisplay({items,buttonId,state}) {
 	},25);
 	//reposition
 	const getReposition = ()=>{
-		return Math.round(position.current/DISPLAY_HEIGHT)*DISPLAY_HEIGHT;
+		return Math.floor(position.current/DISPLAY_HEIGHT)*DISPLAY_HEIGHT;
 	}
 	//vector
 	const getVelocity = ()=>{
@@ -112,13 +112,26 @@ export default function SlotmachineDisplay({items,buttonId,state}) {
 		refresh([]);
 	}
 	const run = (val)=>{
-		selected.current = false;
+		if(!runningFlag.current) {
+			modifyRunningSlots.plus();
+			runningFlag.current = true;
+		}
 		timerRunning.current = true;
-		reposition.current = NaN;
 		velocity.current = val;
+		reposition.current = NaN;
+		selected.current = false;
+	}
+	const stop = ()=>{
+		if(runningFlag.current) {
+			modifyRunningSlots.minus();
+			runningFlag.current = false;
+		}
+		timerRunning.current = false;
+		velocity.current = 0.;
+		refresh([]);
 	}
 	//button
-	const mouseDownCallback = useCallback((event)=>{
+	const mouseDownCallback = (event)=>{
 		if((event.type!=='mousedown'&&event.touches.length<2&&isMobile())||(!isMobile())) {
 			// console.log(`${buttonId}번버튼누름`);
 			TOUCH_VECTOR = [];
@@ -128,31 +141,29 @@ export default function SlotmachineDisplay({items,buttonId,state}) {
 			selected.current = true;
 			timerRunning.current = false;
 		}
-	},[]);
-	//window
-	const mouseUpCallback = useCallback((event)=>{
-		if(!selected.current){return;}
-		if((event.type!=='mouseup'&&isMobile())||(!isMobile())) {
-			// console.log(`${buttonId}번버튼뗐음`);
-			run(getVelocity());
-		}
-	},[]);
-	const mouseMoveCallback = useCallback((event)=>{
-		if(!selected.current){return;}
-		if((event.type!=='mousemove'&&isMobile())||(!isMobile())) {
-			let val = getYVector(event)
-			progress(val);
-			if (TOUCH_VECTOR.length>=5) {
-				TOUCH_VECTOR.shift();
-			}
-			TOUCH_VECTOR.push(val);
-			// console.log(TOUCH_VECTOR);
-		}
-	// eslint-disable-next-line 
-	},[])
+	};
 	//무브,릴리즈리스너
 	useEffect(()=>{
 		
+		const mouseUpCallback = (event)=>{
+			if(!selected.current){return;}
+			if((event.type!=='mouseup'&&isMobile())||(!isMobile())) {
+				run(getVelocity());
+			}
+		};
+
+		const mouseMoveCallback = (event)=>{
+			if(!selected.current){return;}
+			if((event.type!=='mousemove'&&isMobile())||(!isMobile())) {
+				let val = getYVector(event)
+				progress(val);
+							if (TOUCH_VECTOR.length>=5) {
+					TOUCH_VECTOR.shift();
+				}
+				TOUCH_VECTOR.push(val);
+			}
+		};
+
 		window.addEventListener('mousemove',mouseMoveCallback);
 		window.addEventListener('touchmove',mouseMoveCallback);
 		window.addEventListener('mouseup',mouseUpCallback);
@@ -164,8 +175,7 @@ export default function SlotmachineDisplay({items,buttonId,state}) {
 			window.removeEventListener('mouseup',mouseUpCallback);
 			window.removeEventListener('touchend',mouseUpCallback);
 		};
-	// eslint-disable-next-line 
-	},[]);
+	});
 	return <>
 		<div className='slotmachineDisplay' 
 			onMouseDown={(event)=>{mouseDownCallback(event)}}

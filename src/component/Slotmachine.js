@@ -1,8 +1,14 @@
 import slotItemDefault from 'json/default.json';
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 import SlotmachineDisplay from './SlotmachineDisplay';
+
+function SlotmachineResultDisplay({val}) {
+	return <div className='slotmachineResultDisplay active'>
+		{val}
+	</div>
+}
 
 export default function Slotmachine() {
 	const slotItemsTemp = [];
@@ -14,6 +20,7 @@ export default function Slotmachine() {
 	}
 	const [slotItems,setSlotItems] = useState(slotItemsTemp);
 	const [runningSlots,setRunningSlots] = useState(0);
+	const [displayText,setDisplayText] = useState('');
 	const modifySlotItems = new class{
 		modify(newItem){
 			setSlotItems(newItem);
@@ -26,28 +33,30 @@ export default function Slotmachine() {
 			setSlotItems();
 		}
 	}();
-	const modifyRunningSlots = new class{
-		plus(){
+	const modifyRunningSlots = {
+		plus:()=>{
 			setRunningSlots(runningSlots+1);
-		}
-		minus(){
+		},
+		minus:()=>{
 			setRunningSlots(runningSlots-1);
 		}
-	}();
-	const state = {
-		slotItems:slotItems,
-		modifySlotItems:modifySlotItems,
-		runningSlots:runningSlots,
-		modifyRunningSlots:modifyRunningSlots
 	};
+	useEffect(()=>{
+		if (runningSlots<=0) {
+			setDisplayText('ssss');
+		} else {
+			setDisplayText('');
+		}
+	},[runningSlots])
 	return <div className='slotmachine fontBitBit'>
 		<h1>다용도 룰렛</h1>
 		<div className='slotmachineDisplayContainer'>
 			{slotItems.map((displayItem,index)=>{
 				return <div key={'sd'+index} className='slotmachineDisplayWrapper dotbox'>
-					<SlotmachineDisplay items={displayItem} buttonId={index} state={state}/>
+					<SlotmachineDisplay items={displayItem} buttonId={index} modifyRunningSlots={modifyRunningSlots}/>
 				</div>
 			})}
 		</div>
+		<SlotmachineResultDisplay val={displayText}/>
 	</div>
 }

@@ -1,6 +1,6 @@
 import slotItemDefault from 'json/default.json';
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 
 import SlotmachineDisplay from './SlotmachineDisplay';
 
@@ -11,14 +11,9 @@ function SlotmachineResultDisplay({val}) {
 }
 
 export default function Slotmachine() {
-	const slotItemsTemp = [];
+	const slotItemsTemp = useRef([]);
 	const [displayCount,setDisplayCount] = useState(localStorage.getItem('slotmachine-display-count')||3);
-	for(let i = 0;i<displayCount;i++) {
-		localStorage.getItem('slotmachine-content'+i)?
-		slotItemsTemp.push(localStorage.getItem('slotmachine-content'+i)):
-		slotItemsTemp.push(slotItemDefault[i]||['-'])
-	}
-	const [slotItems,setSlotItems] = useState(slotItemsTemp);
+	const [slotItems,setSlotItems] = useState(slotItemsTemp.current);
 	const [runningSlots,setRunningSlots] = useState(0);
 	const [displayText,setDisplayText] = useState('');
 	const modifySlotItems = new class{
@@ -48,6 +43,19 @@ export default function Slotmachine() {
 			setDisplayText('');
 		}
 	},[runningSlots])
+	useEffect(()=>{
+
+		for(let i = 0;i<displayCount;i++) {
+			localStorage.getItem('slotmachine-content'+i)?
+			slotItemsTemp.current.push(localStorage.getItem('slotmachine-content'+i)):
+			slotItemsTemp.current.push(slotItemDefault[i]||['-'])
+		}
+
+		return ()=>{
+			slotItemsTemp.current = [];
+		}
+
+	},[displayCount])
 	return <div className='slotmachine fontBitBit'>
 		<h1>다용도 룰렛</h1>
 		<div className='slotmachineDisplayContainer'>

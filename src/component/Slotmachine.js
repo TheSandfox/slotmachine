@@ -16,6 +16,11 @@ export default function Slotmachine() {
 	const [slotItems,setSlotItems] = useState(slotItemsTemp.current);
 	const [runningSlots,setRunningSlots] = useState(0);
 	const [displayText,setDisplayText] = useState('');
+	const displayTextRef = useRef(['','','']);
+	const setDisplayTextRef = (index,content)=>{
+		displayTextRef.current[index] = content;
+		console.log(displayTextRef.current[index]);
+	}
 	const modifySlotItems = new class{
 		modify(newItem){
 			setSlotItems(newItem);
@@ -38,6 +43,7 @@ export default function Slotmachine() {
 	};
 	useEffect(()=>{
 		if (runningSlots<=0) {
+			// console.log(displayTextRef.current);
 			setDisplayText('ssss');
 		} else {
 			setDisplayText('');
@@ -61,7 +67,12 @@ export default function Slotmachine() {
 		<div className='slotmachineDisplayContainer'>
 			{slotItems.map((displayItem,index)=>{
 				return <div key={'sd'+index} className='slotmachineDisplayWrapper dotbox'>
-					<SlotmachineDisplay items={displayItem} buttonId={index} modifyRunningSlots={modifyRunningSlots}/>
+					<SlotmachineDisplay 
+						items={displayItem} 
+						buttonId={index} 
+						modifyRunningSlots={modifyRunningSlots}
+						setDisplayTextRef={setDisplayTextRef}
+					/>
 				</div>
 			})}
 		</div>

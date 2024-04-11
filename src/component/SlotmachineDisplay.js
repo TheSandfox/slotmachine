@@ -30,7 +30,7 @@ function getYVector(event) {
 	return 0;
 }
 
-export default function SlotmachineDisplay({items,modifyRunningSlots}) {
+export default function SlotmachineDisplay({items,buttonId,modifyRunningSlots,setDisplayTextRef}) {
 	const refresh = useState([])[1];
 	const position = useRef(0.);
 	const reposition = useRef(NaN);
@@ -65,6 +65,10 @@ export default function SlotmachineDisplay({items,modifyRunningSlots}) {
 			}
 		}
 	},25);
+	//currentString
+	const getCurrentString = ()=>{
+		return "dddd";
+	}
 	//reposition
 	const getReposition = ()=>{
 		return Math.floor(position.current/DISPLAY_HEIGHT)*DISPLAY_HEIGHT;
@@ -123,6 +127,7 @@ export default function SlotmachineDisplay({items,modifyRunningSlots}) {
 	}
 	const stop = ()=>{
 		if(runningFlag.current) {
+			setDisplayTextRef(buttonId,getCurrentString());
 			modifyRunningSlots.minus();
 			runningFlag.current = false;
 		}
@@ -176,6 +181,12 @@ export default function SlotmachineDisplay({items,modifyRunningSlots}) {
 			window.removeEventListener('touchend',mouseUpCallback);
 		};
 	});
+	//최초 시작시 상위 컴포넌트에 현재 문자열 전달
+	useEffect(()=>{
+		setDisplayTextRef(buttonId,getCurrentString());
+
+		return ()=>{}
+	},[])
 	return <>
 		<div className='slotmachineDisplay' 
 			onMouseDown={(event)=>{mouseDownCallback(event)}}

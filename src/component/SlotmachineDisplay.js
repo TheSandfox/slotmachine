@@ -5,7 +5,7 @@ import { useRef, useEffect, useState } from 'react';
 const DISPLAY_HEIGHT = 64;
 const VELOCITY_CONSTANT = 10;
 const VELOCITY_ATTENUATION = 0.99;
-const VELOCITY_FRICTION = 25;
+const VELOCITY_FRICTION = 50;
 const REPOSITION_SPEED = 64;
 let TOUCH_PREVIOUS_Y = NaN;
 let TOUCH_VECTOR = [];
@@ -16,6 +16,7 @@ function isMobile() {
 
 function getYVector(event) {
 	if (event.type==='mousemove') {
+		// console.log(event.movementY);
 		return event.movementY;
 	} else if (event.type==='touchmove') {
 		if (isNaN(TOUCH_PREVIOUS_Y)) {
@@ -24,6 +25,7 @@ function getYVector(event) {
 		} else {
 			let rVal = -1*(TOUCH_PREVIOUS_Y - event.touches[0].clientY);
 			TOUCH_PREVIOUS_Y = event.touches[0].clientY;
+			// console.log(parseInt(rVal));
 			return parseInt(rVal);
 		}
 	}
@@ -67,7 +69,15 @@ export default function SlotmachineDisplay({items,buttonId,modifyRunningSlots,se
 	},25);
 	//currentString
 	const getCurrentString = ()=>{
-		return "dddd";
+		if (items.length<=0) {
+			return ''
+		} else {
+			let positionTemp = position.current*-1;
+			while(positionTemp<0) {
+				positionTemp += items.length * DISPLAY_HEIGHT;
+			}
+			return items[Math.floor(positionTemp/DISPLAY_HEIGHT)];
+		}
 	}
 	//reposition
 	const getReposition = ()=>{
@@ -138,11 +148,12 @@ export default function SlotmachineDisplay({items,buttonId,modifyRunningSlots,se
 	//button
 	const mouseDownCallback = (event)=>{
 		if((event.type!=='mousedown'&&event.touches.length<2&&isMobile())||(!isMobile())) {
-			// console.log(`${buttonId}번버튼누름`);
-			TOUCH_VECTOR = [];
 			if (event.type==='touchstart') {
 				TOUCH_PREVIOUS_Y = NaN;
+			} else if (event.button!==0) {
+				return;
 			}
+			TOUCH_VECTOR = [];
 			selected.current = true;
 			timerRunning.current = false;
 		}
@@ -162,7 +173,7 @@ export default function SlotmachineDisplay({items,buttonId,modifyRunningSlots,se
 			if((event.type!=='mousemove'&&isMobile())||(!isMobile())) {
 				let val = getYVector(event)
 				progress(val);
-							if (TOUCH_VECTOR.length>=5) {
+				if (TOUCH_VECTOR.length>=5) {
 					TOUCH_VECTOR.shift();
 				}
 				TOUCH_VECTOR.push(val);
@@ -186,6 +197,7 @@ export default function SlotmachineDisplay({items,buttonId,modifyRunningSlots,se
 		setDisplayTextRef(buttonId,getCurrentString());
 
 		return ()=>{}
+	// eslint-disable-next-line
 	},[])
 	return <>
 		<div className='slotmachineDisplay' 

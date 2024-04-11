@@ -4,8 +4,8 @@ import { useEffect, useState, useRef } from "react"
 
 import SlotmachineDisplay from './SlotmachineDisplay';
 
-function SlotmachineResultDisplay({val}) {
-	return <div className='slotmachineResultDisplay active'>
+function SlotmachineResultDisplay({val,active}) {
+	return <div className={'slotmachineResultDisplay'+(active?' active':'')}>
 		{val}
 	</div>
 }
@@ -16,6 +16,7 @@ export default function Slotmachine() {
 	const [slotItems,setSlotItems] = useState(slotItemsTemp.current);
 	const [runningSlots,setRunningSlots] = useState(0);
 	const [displayText,setDisplayText] = useState('');
+	const [displayActive,setDisplayActive] = useState(false);
 	const displayTextRef = useRef(['','','']);
 	const setDisplayTextRef = (index,content)=>{
 		displayTextRef.current[index] = content;
@@ -41,12 +42,14 @@ export default function Slotmachine() {
 			setRunningSlots(runningSlots-1);
 		}
 	};
+	//슬롯 정지 시 결과
 	useEffect(()=>{
 		if (runningSlots<=0) {
 			// console.log(displayTextRef.current);
-			setDisplayText('ssss');
+			setDisplayText(displayTextRef.current.join(' '));
+			setDisplayActive(true);
 		} else {
-			setDisplayText('');
+			setDisplayActive(false);
 		}
 	},[runningSlots])
 	useEffect(()=>{
@@ -76,6 +79,6 @@ export default function Slotmachine() {
 				</div>
 			})}
 		</div>
-		<SlotmachineResultDisplay val={displayText}/>
+		<SlotmachineResultDisplay val={displayText} active={displayActive}/>
 	</div>
 }

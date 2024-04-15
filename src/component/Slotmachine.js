@@ -4,6 +4,10 @@ import { useEffect, useState, useRef } from "react"
 
 import SlotmachineDisplay from './SlotmachineDisplay';
 
+function SlotmachineButton() {
+	return <></>
+}
+
 function SlotmachineResultDisplay({val,active}) {
 	return <div className={'slotmachineResultDisplay'+(active?' active':'')}>
 		{val}
@@ -78,6 +82,9 @@ export default function Slotmachine() {
 					/>
 				</div>
 			})}
+		</div>
+		<div classname='slotmachineButtonContainer'>
+			<SlotmachineButton />
 		</div>
 		<SlotmachineResultDisplay val={displayText} active={displayActive}/>
 	</div>

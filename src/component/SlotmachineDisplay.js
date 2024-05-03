@@ -199,6 +199,7 @@ export default function SlotmachineDisplay({items,buttonId,modifyRunningSlots,se
 		return ()=>{}
 	// eslint-disable-next-line
 	},[])
+	console.log(items);
 	return <>
 		<div className='slotmachineDisplay' 
 			onMouseDown={(event)=>{mouseDownCallback(event)}}

@@ -59,9 +59,9 @@ export default function Slotmachine() {
 	useEffect(()=>{
 
 		for(let i = 0;i<displayCount;i++) {
-			localStorage.getItem('slotmachine-content'+i)?
-			slotItemsTemp.current.push(localStorage.getItem('slotmachine-content'+i)):
-			slotItemsTemp.current.push(slotItemDefault[i]||['-'])
+			localStorage.getItem('slotmachine-content'+i)
+			?slotItemsTemp.current.push(JSON.parse(localStorage.getItem('slotmachine-content'+i)))
+			:slotItemsTemp.current.push(slotItemDefault[i]||['-'])
 		}
 
 		return ()=>{

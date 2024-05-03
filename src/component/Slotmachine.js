@@ -69,6 +69,7 @@ export default function Slotmachine() {
 		}
 
 	},[displayCount])
+	console.log(slotItemDefault);
 	return <div className='slotmachine fontBitBit'>
 		<h1>다용도 룰렛</h1>
 		<div className='slotmachineDisplayContainer'>

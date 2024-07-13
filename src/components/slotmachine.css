@@ -1,0 +1,23 @@
+.slotmachineDisplayContainer {
+	display: flex;
+	height: 100dvh;
+}
+
+/* 디스플레이 한개 */
+.slotmachineDisplay {
+	width: 128px;
+	overflow-y: hidden;
+	&>.slotmachineDisplayItemContainer {
+		/* 표시문자열 컨테이너 */
+		display: flex;
+		flex-direction: column;
+		position: relative;
+		&>.slotmachineDisplayItem {
+			/* 표시문자열 */
+			user-select: none;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+	}
+}

@@ -14,11 +14,28 @@ function Slotmachine() {
 			return null;
 		}
 	},[items]);
+	//완성문자열
+	const [displayMode,setDisplayMode] = useState([true]);
 	const [displayString,setDisplayString] = useState(['']);
+	const handleDisplayMode = (val,index)=>{
+		setDisplayMode(prev => {
+            let newArr = [...prev];
+            newArr[index] = val;
+			console.log(newArr);
+            return newArr;
+        });
+	}
 	const handleDisplayString = (val,index)=>{
-		let arr = [...displayString];
-		arr[index] = val;
-		setDisplayString(arr);
+		setDisplayString(prev => {
+            let newArr = [...prev];
+            if (val !== '') {
+                newArr[index] = val;
+                handleDisplayMode(true, index);
+            } else {
+               handleDisplayMode(false, index);
+            }
+            return newArr;
+        });
 	};
 	//문자열불러오기
 	useEffect(()=>{
@@ -32,21 +49,29 @@ function Slotmachine() {
 		}
 		fetchItems();
 	},[]);
-	//
+	//디스플레이스트링&디스플레이모드 초기화
 	useEffect(()=>{
 		setDisplayString(()=>{
 			return items.map((item,index)=>{
 				return item[initialDisplayIndex[index]];
 			})
 		})
+		setDisplayMode(()=>{
+			return items.map(()=>{
+				return true
+			})
+		})
 	},[initialDisplayIndex,items])
 	return <>
-		<div>{displayString.join(' ')}</div>
-		<SlotmachineDisplayContainer 
-			handleDisplayString={handleDisplayString} 
-			items={items} 
-			initialDisplayIndex={initialDisplayIndex}
-		/>
+		<div className={'slotmachineDisplayString'+(displayMode.includes(false)?'':' active')}>{displayString.join(' ')}</div>
+		{items.length>0
+			?<SlotmachineDisplayContainer 
+				handleDisplayString={handleDisplayString} 
+				items={items} 
+				initialDisplayIndex={initialDisplayIndex}
+			/>
+			:<></>
+		}
 	</>
 }
 

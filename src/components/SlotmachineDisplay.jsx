@@ -9,6 +9,7 @@ const TIMERMODE_HOLDING = 1;
 const TIMERMODE_FLOW = 2;
 const TIMERMODE_REPOSITION = 3;
 const MACHAL = 0.03;
+const VELOCITY_FACTOR = 0.25;
 
 //y값 히스토리
 function recordYPosition(event,force) {
@@ -188,6 +189,7 @@ function SlotmachineDisplay({item,index,handleSelectedSlot,selectedSlot,handleDi
 			handleSelectedSlot(index);
 			recordYPosition(e,true);
 			setTimerMode(TIMERMODE_HOLDING);
+			handleDisplayString('',index);
 		}
 		const releaseCallback = (e)=>{
 			// 릴리즈
@@ -195,7 +197,7 @@ function SlotmachineDisplay({item,index,handleSelectedSlot,selectedSlot,handleDi
 			if(!isCursorRelease(e)) {return;}
 			handleSelectedSlot(null);
 			setTimerMode(TIMERMODE_FLOW);
-			setVelocity(getYVectorAverage());
+			setVelocity(getYVectorAverage()*VELOCITY_FACTOR);
 		}
 		//다운
 		window.addEventListener('mousedown',downCallback);

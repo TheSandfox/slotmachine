@@ -1,3 +1,4 @@
+/* 디스플레이 콘테이너 */
 .slotmachineDisplayContainer {
 	display: flex;
 	height: 100dvh;
@@ -19,5 +20,14 @@
 			justify-content: center;
 			align-items: center;
 		}
+	}
+}
+
+/* 완성문자열 */
+.slotmachineDisplayString {
+	opacity: 0.5;
+	transition: 0.15s;
+	&.active {
+		opacity: 1;
 	}
 }

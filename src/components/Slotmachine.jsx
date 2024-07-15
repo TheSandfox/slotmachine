@@ -21,7 +21,6 @@ function Slotmachine() {
 		setDisplayMode(prev => {
             let newArr = [...prev];
             newArr[index] = val;
-			console.log(newArr);
             return newArr;
         });
 	}
@@ -62,7 +61,7 @@ function Slotmachine() {
 			})
 		})
 	},[initialDisplayIndex,items])
-	return <>
+	return <div className="slotmachine">
 		<div className={'slotmachineDisplayString'+(displayMode.includes(false)?'':' active')}>{displayString.join(' ')}</div>
 		{items.length>0
 			?<SlotmachineDisplayContainer 
@@ -72,7 +71,7 @@ function Slotmachine() {
 			/>
 			:<></>
 		}
-	</>
+	</div>
 }
 
 export {

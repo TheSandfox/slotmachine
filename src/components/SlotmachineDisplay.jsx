@@ -8,8 +8,10 @@ const TIMERMODE_STOP = 0;
 const TIMERMODE_HOLDING = 1;
 const TIMERMODE_FLOW = 2;
 const TIMERMODE_REPOSITION = 3;
+const TIMER_TICK = 10;
 const MACHAL = 0.03;
 const VELOCITY_FACTOR = 0.25;
+const VELOCITY_THRESHOLD = 1250. * (TIMER_TICK / 1000.)
 
 //y값 히스토리
 function recordYPosition(event,force) {
@@ -66,16 +68,6 @@ function clamp(yVal,arraySize) {
 	return newVal;
 }
 
-//표시인덱스 구하기
-function carculateIndex(yVal,arraySize) {
-	return Math.floor(clamp(yVal,arraySize)/DISPLAY_HEIGHT);
-}
-
-//터치기기판별
-function isMobile() {
-	return 'ontouchstart' in window || navigator.maxTouchPoints;
-}
-
 //클릭판벌
 function isCursorDown(event,targetElement) {
 	return (event.target===targetElement||targetElement.contains(event.target)) &&
@@ -120,15 +112,20 @@ function SlotmachineDisplay({item,index,handleSelectedSlot,selectedSlot,handleDi
 		}
 	}
 	const handleVelocity = {
-		reduce:()=>{
-			let approx = velocity - (MACHAL)*Math.sign(velocity);
-			if (Math.sign(velocity)!==Math.sign(approx)) {
-				setVelocity(0.);
+		reduce:()=>{setVelocity((prev)=>{
+			let approx = prev - (MACHAL)*Math.sign(prev);
+			if (Math.sign(prev)!==Math.sign(approx)) {
+				// setVelocity(0.);
+				return 0.
 			} else {
-				setRepositionDirection(velocity<=0);
-				setVelocity(approx);
+				if (Math.abs(approx)>VELOCITY_THRESHOLD) {
+					approx = VELOCITY_THRESHOLD;
+				}
+				setRepositionDirection(prev<=0);
+				// setVelocity(approx);
+				return approx;
 			}
-		}
+		})}
 	}
 	//완전정지 콜백
 	useEffect(()=>{
@@ -166,7 +163,7 @@ function SlotmachineDisplay({item,index,handleSelectedSlot,selectedSlot,handleDi
 		const timer = timerMode>TIMERMODE_HOLDING
 			?setInterval(()=>{
 				timerAction();
-			},10)
+			},TIMER_TICK)
 			:null;
 
 		return ()=>{

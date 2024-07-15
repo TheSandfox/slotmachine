@@ -1,7 +1,6 @@
 /* 디스플레이 콘테이너 */
 .slotmachineDisplayContainer {
 	display: flex;
-	height: 100dvh;
 }
 
 /* 디스플레이 한개 */
@@ -30,4 +29,9 @@
 	&.active {
 		opacity: 1;
 	}
+}
+
+/* 슬롯머신 본체 */
+.slotmachine {
+	height: 100dvh;
 }

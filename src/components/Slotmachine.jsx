@@ -62,15 +62,18 @@ function Slotmachine() {
 		})
 	},[initialDisplayIndex,items])
 	return <div className="slotmachine">
-		<div className={'slotmachineDisplayString'+(displayMode.includes(false)?'':' active')}>{displayString.join(' ')}</div>
+		<div className={'slotmachineTitle'}>
+			다용도 룰렛
+		</div>
 		{items.length>0
 			?<SlotmachineDisplayContainer 
-				handleDisplayString={handleDisplayString} 
-				items={items} 
-				initialDisplayIndex={initialDisplayIndex}
+			handleDisplayString={handleDisplayString} 
+			items={items} 
+			initialDisplayIndex={initialDisplayIndex}
 			/>
 			:<></>
 		}
+		<div className={'slotmachineDisplayString'+(displayMode.includes(false)?'':' active')}>{displayString.join(' ')}</div>
 	</div>
 }
 

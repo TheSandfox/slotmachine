@@ -1,5 +1,18 @@
+@import url('https://thesandfox.github.io/css/index.css');
+
 * {
-	margin: 0;
-	padding: 0;
 	box-sizing: border-box;
+}
+
+:root {
+	--color-darkest:#1A3636;
+	--color-dark:#40534C;
+	--color-main:#677D6A;
+	--color-sub:#D6BD98;
+	--color-black:#252525;
+	--color-gray:#cccccc;
+	--color-white:#f9f9f9;
+	--shadow-4px: 4px 4px 0 rgba(0,0,0,0.15);
+	--shadow-3px: 3px 3px 0 rgba(0,0,0,0.15);
+	--shadow-2px: 2px 2px 0 rgba(0,0,0,0.15);
 }

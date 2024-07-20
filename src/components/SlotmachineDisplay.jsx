@@ -82,7 +82,7 @@ function isCursorRelease(event) {
 }
 
 //슬롯머신 디스플레이(한개)
-function SlotmachineDisplay({item,index,handleSelectedSlot,selectedSlot,handleDisplayString,initialDisplayIndex}) {
+function SlotmachineDisplay({item,index,handleSelectedSlot,selectedSlot,handleDisplayString,initialDisplayIndex,trigger}) {
 	const containerRef = useRef(null);
 	const [timerMode,setTimerMode] = useState(TIMERMODE_STOP);
 	const [offsetY,setOffsetY] = useState(()=>{
@@ -119,7 +119,7 @@ function SlotmachineDisplay({item,index,handleSelectedSlot,selectedSlot,handleDi
 				return 0.
 			} else {
 				if (Math.abs(approx)>VELOCITY_THRESHOLD) {
-					approx = VELOCITY_THRESHOLD;
+					approx = VELOCITY_THRESHOLD*Math.sign(approx);
 				}
 				setRepositionDirection(prev<=0);
 				// setVelocity(approx);
@@ -127,6 +127,24 @@ function SlotmachineDisplay({item,index,handleSelectedSlot,selectedSlot,handleDi
 			}
 		})}
 	}
+	//트리거
+	useEffect(()=>{
+		if (!trigger) {
+			return;
+		}
+		switch (trigger[0]) {
+		case 'roll' :
+			// 단순리롤
+			handleSelectedSlot(null);
+			setTimerMode(TIMERMODE_FLOW);
+			setVelocity(VELOCITY_THRESHOLD);
+			break;
+		case 'quick' :
+			// 빠른리롤
+			setTimerMode(TIMERMODE_STOP);
+			break;
+		}
+	},[trigger])
 	//완전정지 콜백
 	useEffect(()=>{
 		if (timerMode===TIMERMODE_STOP) {

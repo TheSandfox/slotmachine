@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { validateMouseDown, validateMouseUp } from "../utils/GenericClick";
 
 const DISPLAY_HEIGHT = 64;
 const Y_POSITION = [0.,0.,0.,0.,0.];
@@ -70,15 +71,18 @@ function clamp(yVal,arraySize) {
 
 //클릭판벌
 function isCursorDown(event,targetElement) {
-	return (event.target===targetElement||targetElement.contains(event.target)) &&
-		((event.button === 0/*좌클릭*/) ||
-		(event.touches && event.touches.length===1))
+	// return (event.target===targetElement||targetElement.contains(event.target)) &&
+	// 	((event.button === 0/*좌클릭*/) ||
+	// 	(event.touches && event.touches.length===1))
+	return (event.target===targetElement||targetElement.contains(event.target))
+		&& validateMouseDown(event);
 }
 
 //릴리즈판별
 function isCursorRelease(event) {
-	return (event.button === 0/*좌클릭*/) ||
-		(event.touches && event.touches.length===0)
+	// return (event.button === 0/*좌클릭*/) ||
+	// 	(event.touches && event.touches.length===0)
+	return validateMouseUp(event);
 }
 
 //슬롯머신 디스플레이(한개)
@@ -86,7 +90,7 @@ function SlotmachineDisplay({item,index,handleSelectedSlot,selectedSlot,handleDi
 	const containerRef = useRef(null);
 	const [timerMode,setTimerMode] = useState(TIMERMODE_STOP);
 	const [offsetY,setOffsetY] = useState(()=>{
-		return clamp(initialDisplayIndex*-DISPLAY_HEIGHT);
+		return clamp(initialDisplayIndex*-DISPLAY_HEIGHT,item.length);
 	});
 	const [velocity,setVelocity] = useState(0.);
 	const [repositionDirection,setRepositionDirection] = useState(1);
@@ -102,6 +106,15 @@ function SlotmachineDisplay({item,index,handleSelectedSlot,selectedSlot,handleDi
 		}
 		return Math.floor(val);
 	},[offsetY,item]);
+	//최초생성
+	useEffect(()=>{
+		if(!item) {return;}
+		if(isNaN(parseInt(initialDisplayIndex))) {return;}
+		if(!handleDisplayString) {return;}
+		handleDisplayString(item[initialDisplayIndex],index);
+		setOffsetY(clamp(initialDisplayIndex*-DISPLAY_HEIGHT,item.length));
+	},[initialDisplayIndex]);
+	//핸들러
 	const handleOffsetY = {
 		add:(val)=>{
 			let newVal = clamp(offsetY+val,item.length);
@@ -136,12 +149,9 @@ function SlotmachineDisplay({item,index,handleSelectedSlot,selectedSlot,handleDi
 		case 'roll' :
 			// 단순리롤
 			handleSelectedSlot(null);
+			handleDisplayString('',index);
 			setTimerMode(TIMERMODE_FLOW);
-			setVelocity(VELOCITY_THRESHOLD);
-			break;
-		case 'quick' :
-			// 빠른리롤
-			setTimerMode(TIMERMODE_STOP);
+			setVelocity(VELOCITY_THRESHOLD*0.75+Math.random()*0.5);
 			break;
 		}
 	},[trigger])
@@ -238,7 +248,7 @@ function SlotmachineDisplay({item,index,handleSelectedSlot,selectedSlot,handleDi
 	},[selectedSlot,index,offsetY,item]);
 	//return JSX
 	return <>
-		<div ref={containerRef} className="slotmachineDisplay" style={{height:`${DISPLAY_HEIGHT}px`}}>
+		<div ref={containerRef} className="slotmachineDisplay fontMedium" style={{height:`${DISPLAY_HEIGHT}px`}}>
 			<div className="slotmachineDisplayItemContainer" style={{top:`${offsetY-DISPLAY_HEIGHT}px`}}>
 				{/* 표시문자열(클론) */}
 				{item
@@ -259,7 +269,7 @@ function SlotmachineDisplay({item,index,handleSelectedSlot,selectedSlot,handleDi
 }
 
 //슬롯머신 디스플레이 컨테이너
-function SlotmachineDisplayContainer({items,handleDisplayString,initialDisplayIndex}) {
+function SlotmachineDisplayContainer({items,handleDisplayString,initialDisplayIndex,trigger}) {
 	const [selectedSlot,setSelectedSlot] = useState(null);
 	const handleSelectedSlot = useCallback((val)=>{
 		setSelectedSlot(val);
@@ -275,6 +285,7 @@ function SlotmachineDisplayContainer({items,handleDisplayString,initialDisplayIn
 					selectedSlot={selectedSlot}
 					handleSelectedSlot={handleSelectedSlot}
 					initialDisplayIndex={initialDisplayIndex[index]}
+					trigger={trigger}
 				/>
 			})}
 		</div>

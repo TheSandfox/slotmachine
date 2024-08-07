@@ -12,7 +12,55 @@
 	--color-black:#252525;
 	--color-gray:#cccccc;
 	--color-white:#f9f9f9;
+	--color-red:#F44336;
+	--color-green:#4BAE4F;
+	--color-yellow:#FFC107;
+	--color-border: rgba(0,0,0,0.25);
 	--shadow-4px: 4px 4px 0 rgba(0,0,0,0.15);
 	--shadow-3px: 3px 3px 0 rgba(0,0,0,0.15);
 	--shadow-2px: 2px 2px 0 rgba(0,0,0,0.15);
+	--slotmachine-width: 800px;
+}
+
+body {
+	background-color: var(--color-main);
+}
+
+#root {
+	width: 100dvw;
+	height: 100dvh;
+	padding: 48px;
+	background-color: var(--color-main);
+}
+
+.fontTitle {
+	font-size: 64px;
+	line-height: 80px;
+}
+
+.fontMedium {
+	font-size: 32px;
+	line-height: 40px;
+}
+
+.fontMain {
+	font-size: 16px;
+	line-height: 20px;
+}
+
+@media screen and (max-width:800px) {
+	.fontTitle {
+		font-size: 48px;
+		line-height: 64px;
+	}
+	
+	.fontMedium {
+		font-size: 24px;
+		line-height: 32px;
+	}
+	
+	.fontMain {
+		font-size: 12px;
+		line-height: 20px;
+	}
 }

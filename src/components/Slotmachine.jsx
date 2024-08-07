@@ -1,10 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import './slotmachine.css';
 import { SlotmachineDisplayContainer } from "./SlotmachineDisplay";
+import { GenericButton } from "./GenericButton";
 
 function Slotmachine() {
 	const [loading,setLoading] = useState(true);
 	const [items,setItems] = useState([]);
+	const [shuffle,setShuffle] = useState([]);
+	const [trigger,setTrigger] = useState(null);
 	const initialDisplayIndex = useMemo(()=>{
 		if (items) {
 			return items.map((item)=>{
@@ -13,20 +16,33 @@ function Slotmachine() {
 		} else {
 			return null;
 		}
-	},[items]);
+	},[items,shuffle]);
+	const [displayCount,setDisplayCount] = useState(3);
+	const handleDisplayCount = {
+		increase:()=>{
+			if (displayCount<4) {
+				setDisplayCount(displayCount+1);
+			}
+		},
+		decrease:()=>{
+			if (displayCount>1) {
+				setDisplayCount(displayCount-1);
+			}
+		}
+	}
 	//완성문자열
 	const [displayMode,setDisplayMode] = useState([true]);
 	const [displayString,setDisplayString] = useState(['']);
 	const handleDisplayMode = (val,index)=>{
 		setDisplayMode(prev => {
-            let newArr = [...prev];
+            let newArr = [...prev].slice(0,displayCount);
             newArr[index] = val;
             return newArr;
         });
 	}
 	const handleDisplayString = (val,index)=>{
 		setDisplayString(prev => {
-            let newArr = [...prev];
+            let newArr = [...prev].slice(0,displayCount);
             if (val !== '') {
                 newArr[index] = val;
                 handleDisplayMode(true, index);
@@ -41,39 +57,65 @@ function Slotmachine() {
 		const fetchItems = async()=>{
 			try {
 				const Defaults = await import('/src/datas/Defaults');
-				setItems(Defaults.items);
+				setItems(Defaults.items.slice(0,displayCount));
 			} catch {
 				// 아이템 불러오기 실패
 			}
 		}
 		fetchItems();
-	},[]);
+	},[displayCount]);
 	//디스플레이스트링&디스플레이모드 초기화
 	useEffect(()=>{
-		setDisplayString(()=>{
-			return items.map((item,index)=>{
-				return item[initialDisplayIndex[index]];
-			})
-		})
 		setDisplayMode(()=>{
 			return items.map(()=>{
-				return true
+				return true;
 			})
 		})
 	},[initialDisplayIndex,items])
 	return <div className="slotmachine">
-		<div className={'slotmachineTitle'}>
+		{/* 헤더 */}
+		<div className={'slotmachineTitle fontTitle'}>
 			다용도 룰렛
 		</div>
-		{items.length>0
-			?<SlotmachineDisplayContainer 
-			handleDisplayString={handleDisplayString} 
-			items={items} 
-			initialDisplayIndex={initialDisplayIndex}
-			/>
-			:<></>
-		}
-		<div className={'slotmachineDisplayString'+(displayMode.includes(false)?'':' active')}>{displayString.join(' ')}</div>
+		{/* 중앙영역 */}
+		<div className={'slotmachineMiddle'}>
+			{items.length>0
+				?<SlotmachineDisplayContainer 
+				handleDisplayString={handleDisplayString} 
+				items={items} 
+				initialDisplayIndex={initialDisplayIndex}
+				trigger={trigger}
+				/>
+				:<></>
+			}
+			<div className={'slotmachineResult'}>
+				<div className={'slotmachineResultString fontMedium'+(displayMode.includes(false)?'':' active')}>{displayString.join(' ')}</div>
+				<div className={'slotmachineResultCopy'}/>
+			</div>
+		</div>
+		{/* 하단버튼영역 */}
+		<div className={'slotmachineBottom'}>
+			<div className={'first'}>
+				<GenericButton className={'edit'} onClick={()=>{
+					
+				}}/>
+				<GenericButton className={'add'} onClick={
+					handleDisplayCount.increase
+				}/>
+				<GenericButton className={'remove'} onClick={
+					handleDisplayCount.decrease
+				}/>
+			</div>
+			<div className={'second'}>
+				<GenericButton className={'quick'} onClick={()=>{
+					setShuffle([]);
+				}}/>
+				<GenericButton className={'run'} onClick={()=>{
+					setTrigger(['roll']);
+					// setTrigger(null);
+				}}/>
+			</div>
+		</div>
 	</div>
 }
 

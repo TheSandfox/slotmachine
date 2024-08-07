@@ -1,12 +1,73 @@
+/* 슬롯머신 본체 */
+.slotmachine {
+	font-family: 'DNFBitBitv2';
+	height: 100%;
+	width: 100%;
+	max-width: var(--slotmachine-width);
+	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	/* 슬롯머신 타이틀 */
+	&>.slotmachineTitle {
+		padding: 24px;
+		text-align: center;
+	}
+	/* 중단 */
+	&>.slotmachineMiddle {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		/* 결과영역 */
+		&>.slotmachineResult {
+			flex: 1;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			gap: 16px;
+			/* 완성문자열 */
+			.slotmachineResultString {
+				opacity: 0.5;
+				transition: 0.15s;
+				user-select: none;
+				&.active {
+					animation-name: slotmachineResultStringAppear;
+					animation-duration: 0.15s;
+					animation-iteration-count: 1;
+					animation-timing-function: ease;
+					user-select: auto;
+					opacity: 1;
+				}
+			}
+			/* 복사버튼 */
+			.slotmachineResultCopy {
+
+			}
+		}
+	}
+	/* 하단 */
+	&>.slotmachineBottom {
+		display: flex;
+		justify-content: space-between;
+		&>div {
+			display: flex;
+			gap: 16px;
+		}
+	}
+}
+
+
 /* 디스플레이 콘테이너 */
 .slotmachineDisplayContainer {
 	display: flex;
 	flex-direction: column;
+	gap: 48px;
+	padding: 24px 0;
 }
 
 /* 디스플레이 한개 */
 .slotmachineDisplay {
-	width: 128px;
+	/* width: 128px; */
 	overflow: hidden;
 	position: relative;
 	filter: drop-shadow(var(--shadow-4px));
@@ -39,31 +100,14 @@
 	}
 }
 
-/* 완성문자열 */
-.slotmachineDisplayString {
-	opacity: 0.5;
-	transition: 0.15s;
-	user-select: none;
-	&.active {
-		user-select: auto;
-		opacity: 1;
+@keyframes slotmachineResultStringAppear {
+	0% {
+		transform: scale(1.0);
 	}
-}
-
-/* 슬롯머신 타이틀 */
-.slotmachineTitle {
-	font-size: 64px;
-}
-
-/* 슬롯머신 본체 */
-.slotmachine {
-	font-family: 'DNFBitBitv2';
-	height: 100dvh;
-	width: 100%;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	background-color: var(--color-dark);
-	overflow: hidden;
+	50% {
+		transform: scale(1.25);
+	}
+	100% {
+		transform: scale(1.0);
+	}
 }

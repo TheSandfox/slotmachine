@@ -1,0 +1,50 @@
+.genericButton {
+	--button-height: 64px;
+	background-color: var(--color-main);
+	min-width: 64px;
+	height: var(--button-height);
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	filter: drop-shadow(var(--shadow-4px));
+	cursor: pointer;
+	&>.top {
+		pointer-events: none;
+		background-color: inherit;
+		min-width: 100%;
+		min-height: var(--button-height);
+		border-width: 4px;
+		border-color: var(--color-black);
+		border-style: solid;
+	}
+	&>.bottom {
+		background-color: inherit;
+		filter: brightness(0.65);
+		width: 100%;
+		min-height: 8px;
+		border-width: 0 4px 4px 4px;
+		border-color: var(--color-black);
+		border-style: solid;
+	}
+	&.pressed {
+		&>.bottom {
+			display: none;
+		}
+	}
+	/* 버튼유형 */
+	&.edit {
+		background-color: var(--color-sub);
+	}
+	&.add {
+		background-color: var(--color-green);
+	}
+	&.remove {
+		background-color: var(--color-red);
+	}
+	&.quick {
+		background-color: var(--color-yellow);
+	}
+	&.run {
+		background-color: var(--color-gray);
+	}
+}

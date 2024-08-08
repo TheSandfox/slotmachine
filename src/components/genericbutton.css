@@ -27,6 +27,7 @@
 		}
 	}
 	&>.bottom {
+		pointer-events: none;
 		background-color: inherit;
 		filter: brightness(0.65);
 		width: 100%;

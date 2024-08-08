@@ -5,6 +5,7 @@
 }
 
 :root {
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 	--color-darkest:#1A3636;
 	--color-dark:#40534C;
 	--color-main:#677D6A;
@@ -23,6 +24,9 @@
 }
 
 body {
+	/* 모바일 새로고침 막기 */
+	overscroll-behavior-y: contain;
+	/* 바디 배경색 */
 	background-color: var(--color-main);
 }
 

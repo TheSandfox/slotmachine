@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import './genericbutton.css';
-import { validateMouseDown, validateMouseLeave, validateMouseUp } from "../utils/GenericClick";
+import { validateMouseDown, validateMouseLeave, validateMouseUpInBox } from "../utils/GenericClick";
 
 export function GenericButton({onClick,children,className}) {
 	const [pressed,setPressd] = useState(false);
@@ -13,7 +13,7 @@ export function GenericButton({onClick,children,className}) {
 			}
 		},
 		mouseUp:(e)=>{
-			if(validateMouseUp(e)) {
+			if(validateMouseUpInBox(e)) {
 				if (pressed) {
 					setPressd(false);
 				}

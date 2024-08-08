@@ -17,6 +17,25 @@ export function validateMouseUp(e) {
 	if (e.type==='mouseup') {
 		return (!isMobile())&&e.button===0;
 	} else if (e.type==='touchend') {
+		// let touch = e.changedTouches[0];
+		// let target = e.target;
+		// let rect = target.getBoundingClientRect();
+		return e.touches.length===0
+			// &&!(
+			// 	touch.clientX < rect.left ||
+			// 	touch.clientX > rect.right ||
+			// 	touch.clientY < rect.top ||
+			// 	touch.clientY > rect.bottom
+			// )
+	}
+	return false;
+}
+
+// 업 판별(인박스)
+export function validateMouseUpInBox(e) {
+	if (e.type==='mouseup') {
+		return (!isMobile())&&e.button===0;
+	} else if (e.type==='touchend') {
 		let touch = e.changedTouches[0];
 		let target = e.target;
 		let rect = target.getBoundingClientRect();

@@ -31,7 +31,7 @@ export function GenericButton({onClick,children,className}) {
 		}
 	}
 	return <div 
-		className={`genericButton${className?' '+className:''}${pressed?' pressed':''}`}
+		className={`genericButton fontMedium${className?' '+className:''}${pressed?' pressed':''}`}
 		onMouseDown={handlePressed.mouseDown}
 		onTouchStart={handlePressed.mouseDown}
 		onMouseUp={handlePressed.mouseUp}

@@ -2,6 +2,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import './slotmachine.css';
 import { SlotmachineDisplayContainer } from "./SlotmachineDisplay";
 import { GenericButton } from "./GenericButton";
+// 아이콘
+import { FaEdit } from "react-icons/fa";
+import { FaPlus } from "react-icons/fa";
+import { FaMinus } from "react-icons/fa";
+import { FaBolt, FaCopy } from "react-icons/fa6";
+
 
 function Slotmachine() {
 	const [loading,setLoading] = useState(true);
@@ -52,6 +58,17 @@ function Slotmachine() {
             return newArr;
         });
 	};
+	const copyDisplayString = useCallback(()=>{
+		let newString = displayString.map((stringItem)=>{
+			return stringItem.replaceAll(' ','')
+		})
+		.filter((stringItem)=>{
+			return stringItem.length > 0;
+		}).join(' ');
+		navigator.clipboard.writeText(newString).then(() => {
+			alert(`"${newString}"\n클립보드에 복사되었습니다.`);
+		});
+	},[displayString]);
 	//문자열불러오기
 	useEffect(()=>{
 		const fetchItems = async()=>{
@@ -72,6 +89,11 @@ function Slotmachine() {
 			})
 		})
 	},[initialDisplayIndex,items])
+	//표시갯수 가감시 트리거정상화
+	useEffect(()=>{
+		// setTrigger(['quick']);
+		setTrigger(null);
+	},[displayCount])
 	return <div className="slotmachine">
 		{/* 헤더 */}
 		<div className={'slotmachineTitle fontTitle'}>
@@ -88,9 +110,12 @@ function Slotmachine() {
 				/>
 				:<></>
 			}
-			<div className={'slotmachineResult'}>
-				<div className={'slotmachineResultString fontMedium'+(displayMode.includes(false)?'':' active')}>{displayString.join(' ')}</div>
-				<div className={'slotmachineResultCopy'}/>
+			<div className={'slotmachineResult'+(displayMode.includes(false)?'':' active')}>
+				{/* 완성문자열 */}
+				<div className={'slotmachineResultString fontMedium'}>{displayString.join(' ')}</div>
+				{/* 복사버튼 */}
+				<FaCopy className={'slotmachineResultCopy'+(displayMode?' active':'')} onClick={copyDisplayString}>
+				</FaCopy>
 			</div>
 		</div>
 		{/* 하단버튼영역 */}
@@ -98,22 +123,32 @@ function Slotmachine() {
 			<div className={'first'}>
 				<GenericButton className={'edit'} onClick={()=>{
 					
-				}}/>
+				}}>
+					<FaEdit/>
+				</GenericButton>
 				<GenericButton className={'add'} onClick={
 					handleDisplayCount.increase
-				}/>
+				}>
+					<FaPlus/>
+				</GenericButton>
 				<GenericButton className={'remove'} onClick={
 					handleDisplayCount.decrease
-				}/>
+				}>
+					<FaMinus/>
+				</GenericButton>
 			</div>
 			<div className={'second'}>
 				<GenericButton className={'quick'} onClick={()=>{
-					setShuffle([]);
-				}}/>
+					setTrigger(['quick']);
+				}}>
+					<FaBolt/>
+				</GenericButton>
 				<GenericButton className={'run'} onClick={()=>{
 					setTrigger(['roll']);
 					// setTrigger(null);
-				}}/>
+				}}>
+					GO!
+				</GenericButton>
 			</div>
 		</div>
 	</div>

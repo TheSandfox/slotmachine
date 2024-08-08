@@ -10,14 +10,21 @@
 	justify-content: center;
 	/* 슬롯머신 타이틀 */
 	&>.slotmachineTitle {
+		user-select: none;
 		padding: 24px;
 		text-align: center;
+		@media screen and (max-width:800px) {
+			padding: 16px;
+			background-color: var(--color-dark);
+			color: var(--color-white);
+		}
 	}
 	/* 중단 */
 	&>.slotmachineMiddle {
 		flex: 1;
 		display: flex;
 		flex-direction: column;
+		overflow: hidden;
 		/* 결과영역 */
 		&>.slotmachineResult {
 			flex: 1;
@@ -25,23 +32,49 @@
 			justify-content: center;
 			align-items: center;
 			gap: 16px;
-			/* 완성문자열 */
-			.slotmachineResultString {
-				opacity: 0.5;
-				transition: 0.15s;
-				user-select: none;
-				&.active {
-					animation-name: slotmachineResultStringAppear;
-					animation-duration: 0.15s;
-					animation-iteration-count: 1;
-					animation-timing-function: ease;
-					user-select: auto;
-					opacity: 1;
+			color: var(--color-white);
+			opacity: 0.5;
+			transition: 0.15s;
+			user-select: none;
+			&.active {
+				animation-name: slotmachineResultStringAppear;
+				animation-duration: 0.15s;
+				animation-iteration-count: 1;
+				animation-timing-function: ease;
+				user-select: auto;
+				opacity: 1;
+				&>.slotmachineResultCopy {
+					display: block;
 				}
 			}
+			/* 완성문자열 */
+			&>.slotmachineResultString {
+				
+			}
 			/* 복사버튼 */
-			.slotmachineResultCopy {
-
+			&>.slotmachineResultCopy {
+				cursor: pointer;
+				width: 32px;
+				height: 32px;
+				display: none;
+				@media screen and (max-width:800px) {
+					width: 24px;
+					height: 24px;
+				}
+			}
+		}
+		/* 미들영역 모바일 */
+		@media screen and (max-width:800px) {
+			&>.slotmachineDisplayContainer {
+				flex: 1;
+				justify-content: center;
+				padding: 24px;
+				gap: 32px;
+			}
+			&>.slotmachineResult {
+				flex: initial;
+				height: 240px;
+				/* flex-direction: column; */
 			}
 		}
 	}
@@ -52,6 +85,25 @@
 		&>div {
 			display: flex;
 			gap: 16px;
+		}
+		&>.second>.run {
+			width: calc(var(--button-height) * 2 + 16px);
+		}
+		@media screen and (max-width:800px) {
+			flex-direction: column;
+			justify-content: initial;
+			&>div {
+				padding: 16px;
+				&>.genericButton {
+					flex: 1;
+				}
+			}
+			&>.first {
+				background-color: var(--color-dark);
+			}
+			&>.second {
+				background-color: var(--color-darkest);
+			}
 		}
 	}
 }

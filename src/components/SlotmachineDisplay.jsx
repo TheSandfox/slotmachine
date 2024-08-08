@@ -122,6 +122,9 @@ function SlotmachineDisplay({item,index,handleSelectedSlot,selectedSlot,handleDi
 		},
 		set:(val)=>{
 			setOffsetY(clamp(offsetY,item.length));
+		},
+		random:()=>{
+			setOffsetY(clamp(parseInt(Math.random()*item.length)*DISPLAY_HEIGHT,item.length))
 		}
 	}
 	const handleVelocity = {
@@ -152,6 +155,13 @@ function SlotmachineDisplay({item,index,handleSelectedSlot,selectedSlot,handleDi
 			handleDisplayString('',index);
 			setTimerMode(TIMERMODE_FLOW);
 			setVelocity(VELOCITY_THRESHOLD*0.75+Math.random()*0.5);
+			break;
+		case 'quick' :
+			//빨리섞기
+			handleOffsetY.random();
+			handleSelectedSlot(null);
+			setVelocity(0.);
+			setTimerMode(TIMERMODE_STOP);
 			break;
 		}
 	},[trigger])
@@ -274,6 +284,17 @@ function SlotmachineDisplayContainer({items,handleDisplayString,initialDisplayIn
 	const handleSelectedSlot = useCallback((val)=>{
 		setSelectedSlot(val);
 	},[]);
+	//슬롯 선택 시 커서변경
+	useEffect(()=>{
+		if (selectedSlot!==null) {
+			document.body.style.cursor = 'grabbing';
+		} else {
+			document.body.style.cursor = 'initial';
+		}
+		return ()=>{
+			document.body.style.cursor = 'initial';
+		}
+	},[selectedSlot]);
 	return <>
 		<div className="slotmachineDisplayContainer">
 			{items.map((item,index)=>{

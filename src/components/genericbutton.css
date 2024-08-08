@@ -8,6 +8,8 @@
 	justify-content: flex-end;
 	filter: drop-shadow(var(--shadow-4px));
 	cursor: pointer;
+	color: var(--color-black);
+	user-select: none;
 	&>.top {
 		pointer-events: none;
 		background-color: inherit;
@@ -16,6 +18,13 @@
 		border-width: 4px;
 		border-color: var(--color-black);
 		border-style: solid;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		&>* {
+			width: 40px;
+			height: 40px;
+		}
 	}
 	&>.bottom {
 		background-color: inherit;
@@ -46,5 +55,14 @@
 	}
 	&.run {
 		background-color: var(--color-gray);
+	}
+	@media screen and (max-width:800px) {
+		--button-height:40px;
+		&>.top {
+			&>* {
+				width: 24px;
+				height: 24px;
+			}
+		}
 	}
 }

@@ -7,6 +7,7 @@ import { FaEdit } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa";
 import { FaMinus } from "react-icons/fa";
 import { FaBolt, FaCopy } from "react-icons/fa6";
+import { EditBox } from "./EditBox";
 
 
 function Slotmachine() {
@@ -14,6 +15,7 @@ function Slotmachine() {
 	const [items,setItems] = useState([]);
 	const [shuffle,setShuffle] = useState([]);
 	const [trigger,setTrigger] = useState(null);
+	const [displayEdit,setDisplayEdit] = useState(false);
 	const initialDisplayIndex = useMemo(()=>{
 		if (items) {
 			return items.map((item)=>{
@@ -34,6 +36,11 @@ function Slotmachine() {
 			if (displayCount>1) {
 				setDisplayCount(displayCount-1);
 			}
+		}
+	}
+	const handleDisplayEdit = {
+		close:()=>{
+			setDisplayEdit(false);
 		}
 	}
 	//완성문자열
@@ -94,64 +101,70 @@ function Slotmachine() {
 		// setTrigger(['quick']);
 		setTrigger(null);
 	},[displayCount])
-	return <div className="slotmachine">
-		{/* 헤더 */}
-		<div className={'slotmachineTitle fontTitle'}>
-			다용도 룰렛
-		</div>
-		{/* 중앙영역 */}
-		<div className={'slotmachineMiddle'}>
-			{items.length>0
-				?<SlotmachineDisplayContainer 
-				handleDisplayString={handleDisplayString} 
-				items={items} 
-				initialDisplayIndex={initialDisplayIndex}
-				trigger={trigger}
-				/>
-				:<></>
-			}
-			<div className={'slotmachineResult'+(displayMode.includes(false)?'':' active')}>
-				{/* 완성문자열 */}
-				<div className={'slotmachineResultString fontMedium'}>{displayString.join(' ')}</div>
-				{/* 복사버튼 */}
-				<FaCopy className={'slotmachineResultCopy'+(displayMode?' active':'')} onClick={copyDisplayString}>
-				</FaCopy>
+	return <>
+		<div className="slotmachine">
+			{/* 헤더 */}
+			<div className={'slotmachineTitle fontTitle'}>
+				다용도 룰렛
+			</div>
+			{/* 중앙영역 */}
+			<div className={'slotmachineMiddle'}>
+				{items.length>0
+					?<SlotmachineDisplayContainer 
+					handleDisplayString={handleDisplayString} 
+					items={items} 
+					initialDisplayIndex={initialDisplayIndex}
+					trigger={trigger}
+					/>
+					:<></>
+				}
+				<div className={'slotmachineResult'+(displayMode.includes(false)?'':' active')}>
+					{/* 완성문자열 */}
+					<div className={'slotmachineResultString fontMedium'}>{displayString.join(' ')}</div>
+					{/* 복사버튼 */}
+					<FaCopy className={'slotmachineResultCopy'+(displayMode?' active':'')} onClick={copyDisplayString}>
+					</FaCopy>
+				</div>
+			</div>
+			{/* 하단버튼영역 */}
+			<div className={'slotmachineBottom'}>
+				<div className={'first'}>
+					<GenericButton className={'edit'} onClick={()=>{
+						setDisplayEdit(!displayEdit);
+					}}>
+						<FaEdit/>
+					</GenericButton>
+					<GenericButton className={'add'} onClick={
+						handleDisplayCount.increase
+					}>
+						<FaPlus/>
+					</GenericButton>
+					<GenericButton className={'remove'} onClick={
+						handleDisplayCount.decrease
+					}>
+						<FaMinus/>
+					</GenericButton>
+				</div>
+				<div className={'second'}>
+					<GenericButton className={'quick'} onClick={()=>{
+						setTrigger(['quick']);
+					}}>
+						<FaBolt/>
+					</GenericButton>
+					<GenericButton className={'run'} onClick={()=>{
+						setTrigger(['roll']);
+						// setTrigger(null);
+					}}>
+						GO!
+					</GenericButton>
+				</div>
 			</div>
 		</div>
-		{/* 하단버튼영역 */}
-		<div className={'slotmachineBottom'}>
-			<div className={'first'}>
-				<GenericButton className={'edit'} onClick={()=>{
-					
-				}}>
-					<FaEdit/>
-				</GenericButton>
-				<GenericButton className={'add'} onClick={
-					handleDisplayCount.increase
-				}>
-					<FaPlus/>
-				</GenericButton>
-				<GenericButton className={'remove'} onClick={
-					handleDisplayCount.decrease
-				}>
-					<FaMinus/>
-				</GenericButton>
-			</div>
-			<div className={'second'}>
-				<GenericButton className={'quick'} onClick={()=>{
-					setTrigger(['quick']);
-				}}>
-					<FaBolt/>
-				</GenericButton>
-				<GenericButton className={'run'} onClick={()=>{
-					setTrigger(['roll']);
-					// setTrigger(null);
-				}}>
-					GO!
-				</GenericButton>
-			</div>
-		</div>
-	</div>
+		{displayEdit
+			?<EditBox handleDisplayEdit={handleDisplayEdit}/>
+			:<></>
+		}
+	</>
 }
 
 export {

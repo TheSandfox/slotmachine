@@ -40,10 +40,10 @@ export function GenericButton({onClick,children,className}) {
 		onTouchMove={handlePressed.mouseLeave}
 		onContextMenu={(e)=>{e.preventDefault()}}
 	>
-		<div className="top">
+		<div className="top borderBox">
 			{children}
 		</div>
-		<div className={`bottom`}>
+		<div className={`bottom borderBox`}>
 
 		</div>
 	</div>

@@ -1,0 +1,90 @@
+.editBox {
+	width: 100%;
+	height: 100%;
+	max-width: 800px;
+	max-height: 640px;
+	background-color: var(--color-sub);
+	padding: 16px 32px;
+	display: flex;
+	gap: 16px;
+	flex-direction: column;
+	/* 00:타이틀 */
+	&>.title {
+		border-style: none none solid none;
+		padding: 16px 0;
+		text-align: center;
+		user-select: none;
+		filter: drop-shadow(var(--shadow-2px));
+		order: 0;
+	}
+	/* 01:라디오와 인포 */
+	&>.radioAndInfo {
+		order: 1;
+		display: flex;
+		&>.radio {
+			background-color: var(--color-main);
+			padding: 16px;
+			display: flex;
+			gap: 16px;
+			&>.genericButton {
+				--button-height:40px;
+				min-width: 40px;
+				background-color: var(--color-main);
+				&.active {
+					background-color: var(--color-gray);
+				}
+			}
+		}
+		&>.info {
+			flex: 1;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			user-select: none;
+			text-align: center;
+			color: var(--color-dark);
+		}
+	}
+	/* 02:텍스트에리어 */
+	&>.textarea {
+		order: 2;
+		flex: 1;
+		padding: 8px;
+		resize: none;
+	}
+	/* 03:버튼들 */
+	&>.buttons {
+		order: 3;
+		display: flex;
+		justify-content: flex-end;
+		gap: 16px;
+		&>.genericButton {
+			--button-height:40px;
+			min-width: 96px;
+		}
+	}
+	@media screen and (max-width:800px) {
+		padding: 16px 16px;
+		&>.textarea {
+			order: 1;
+		}
+		&>.radioAndInfo {
+			order: 2;
+			flex-direction: column;
+			&>.radio {
+				&>.genericButton {
+					flex: 1;
+				}
+			}
+			&>.info {
+				flex: initial;
+				height: 72px;
+			}
+		}
+		&>.buttons {
+			&>.genericButton {
+				flex: 1;
+			}
+		}
+	}
+}

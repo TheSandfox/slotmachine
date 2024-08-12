@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="background" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #f9f9fa;
+      }
+
+      .cls-2 {
+        fill: #677d6a;
+      }
+
+      .cls-3 {
+        fill: #231f20;
+        opacity: .66;
+      }
+
+      .cls-4 {
+        fill: #252525;
+      }
+    </style>
+  </defs>
+  <rect class="cls-2" width="512" height="512"/>
+  <g>
+    <rect class="cls-3" x="43.64" y="57.2" width="380.99" height="101.6"/>
+    <rect class="cls-1" x="37.64" y="51.2" width="368.99" height="89.6"/>
+    <path class="cls-4" d="M400.63,57.2v77.6H43.64V57.2H400.63m12-12H31.64v101.6H412.63V45.2h0Z"/>
+  </g>
+  <g>
+    <rect class="cls-3" x="77.5" y="217.2" width="380.99" height="101.6"/>
+    <rect class="cls-1" x="71.5" y="211.2" width="368.99" height="89.6"/>
+    <path class="cls-4" d="M434.5,217.2v77.6H77.5v-77.6H434.5m12-12H65.5v101.6H446.5v-101.6h0Z"/>
+  </g>
+  <g>
+    <rect class="cls-3" x="111.37" y="377.2" width="380.99" height="101.6"/>
+    <rect class="cls-1" x="105.37" y="371.2" width="368.99" height="89.6"/>
+    <path class="cls-4" d="M468.36,377.2v77.6H111.37v-77.6H468.36m12-12H99.37v101.6H480.36v-101.6h0Z"/>
+  </g>
+</svg>

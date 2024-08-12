@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import './slotmachine.css';
 import { SlotmachineDisplayContainer } from "./SlotmachineDisplay";
 import { GenericButton } from "./GenericButton";
+import { useNavigate, useParams } from "react-router-dom";
 // 아이콘
 import { FaEdit } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa";
@@ -11,11 +12,12 @@ import { EditBox } from "./EditBox";
 
 
 function Slotmachine() {
+	const navigate = useNavigate();
 	const [loading,setLoading] = useState(true);
 	const [items,setItems] = useState([]);
 	const [shuffle,setShuffle] = useState([]);
 	const [trigger,setTrigger] = useState(null);
-	const [displayEdit,setDisplayEdit] = useState(false);
+	const { displayEdit } = useParams();
 	const initialDisplayIndex = useMemo(()=>{
 		if (items) {
 			return items.map((item)=>{
@@ -39,8 +41,11 @@ function Slotmachine() {
 		}
 	}
 	const handleDisplayEdit = {
-		close:()=>{
-			setDisplayEdit(false);
+		open: ()=>{
+			navigate('/true');
+		},
+		close: ()=>{
+			navigate('/');
 		}
 	}
 	//완성문자열
@@ -129,9 +134,9 @@ function Slotmachine() {
 			{/* 하단버튼영역 */}
 			<div className={'slotmachineBottom'}>
 				<div className={'first'}>
-					<GenericButton className={'edit'} onClick={()=>{
-						setDisplayEdit(!displayEdit);
-					}}>
+					<GenericButton className={'edit'} onClick={
+						handleDisplayEdit.open
+					}>
 						<FaEdit/>
 					</GenericButton>
 					<GenericButton className={'add'} onClick={

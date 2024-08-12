@@ -19,7 +19,8 @@ export default defineConfig({
       short_name: 'slotmachine',
       description: 'slotmachine',
       theme_color: '#677D6A',
-	  background_color: '#677D6A'
+	  background_color: '#677D6A',
+	  lang: 'kr'
     },
 
     workbox: {

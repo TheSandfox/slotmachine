@@ -45,7 +45,7 @@ function Slotmachine() {
 			navigate('/true');
 		},
 		close: ()=>{
-			navigate('/');
+			navigate(-1);
 		}
 	}
 	//완성문자열
